@@ -5,11 +5,16 @@ services:
     ports:
       - "8080:8080"
       - "50000:50000"
+    logging:
+      driver: fluentd
     networks:
       - petclinic
     volumes:
       - /var/jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - fluentd
+
   postgres:
     image: postgres:9.6
     networks:
@@ -19,11 +24,19 @@ services:
       POSTGRES_PASSWORD: sonarpasswd
     volumes:
       - /var/postgres-data:/var/lib/postgresql/data
+    logging:
+      driver: fluentd      
+    depends_on:
+      - fluentd
+
+  
   sonarqube:
     image: sonarqube:lts
     ports:
       - "9000:9000"
       - "9092:9092"
+    logging:
+      driver: fluentd      
     networks:
       - petclinic
     environment:
@@ -33,6 +46,7 @@ services:
     depends_on:
       - postgres
 
+
   mysql:
     image: mysql:5.7
     ports:
@@ -40,8 +54,12 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=petclinic
       - MYSQL_DATABASE=petclinic
+    logging:
+      driver: fluentd      
     volumes:
       - "./conf.d:/etc/mysql/conf.d:ro"
+    depends_on:
+      - fluentd
 
   elasticsearch:
     build:

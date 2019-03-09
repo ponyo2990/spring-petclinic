@@ -1,4 +1,4 @@
-pipeline {
+ pipeline {
     agent any
         tools {
             maven 'maven'
@@ -16,19 +16,47 @@ pipeline {
                sh './mvnw package'
             }
         }
-        
-        stage('JMX_test') {
-            steps{
-                sh 'jmeter -n -t /src/test/jmeter/petclinic_test_plan.jmx'
+
+        stage('SonarQube analysis') {
+            
+            environment {
+                scannerHome = tool 'sonar'
             }
+            steps{
+                  withCredentials([string(credentialsId: 'sonar', variable: 'sonarLogin')]) {
+                       withSonarQubeEnv('sonarqube'){
+                            echo "${env.BUILD_NUMBER}"
+                            sh "${scannerHome}/bin/sonar-scanner -X" +
+                                " -e -Dsonar.host.url=http://sonarqube:9000" +
+                                " -Dsonar.login=${sonarLogin}" +
+                                " -Dsonar.projectName=petclinic" + 
+                                " -Dsonar.projectVersion=${env.BUILD_NUMBER}" + 
+                                " -Dsonar.projectKey=PC" + 
+                                " -Dsonar.sources=src/main/" + 
+                                " -Dsonar.tests=src/test/" +
+                                " -Dsonar.java.binaries=target/classes" +
+                                " -Dsonar.language=java"
+                        }
+                        //timeout(time: 10, unit: 'MINUTES') {
+                          //  waitForQualityGate abortPipeline: true
+                        }
+                    }
+            }
+        
+        
+        stage("Quality Gate"){
+            steps{
+                withCredentials([string(credentialsId: 'sonar', variable: 'sonarLogin')]) {
+                    timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
+                        //def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
+                        //if (qg.status != 'OK') {
+                        //    error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                        //}
+                        waitForQualityGate abortPipeline: true
+                    }
+                }
+            }    
         }
-    }
-    post {
-        success {
-         sh "echo 'Pipeline reached the finish line!'"
-         }
-        failure {
-            sh "echo 'Pipeline failed'"
-         }
-    }
+   }    
 }
+
