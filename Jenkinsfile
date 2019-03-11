@@ -9,6 +9,7 @@ pipeline {
     stages {
         stage('checkout'){
             steps {
+            	slackSend (color: '00ff00', message: "Checking out git..")
                 git branch: 'master',
                 url: 'https://github.com/ponyo2990/spring-petclinic'
             }
@@ -21,11 +22,11 @@ pipeline {
         }
 
         stage('SonarQube analysis') {
-            slackSend (color: '00ff00', message: "In SonarQube Analysis now..")
             environment {
                 scannerHome = tool 'sonar'
             }
             steps{
+            	  slackSend (color: '00ff00', message: "In SonarQube Analysis now..")
                   withCredentials([string(credentialsId: 'sonar', variable: 'sonarLogin')]) {
                        withSonarQubeEnv('sonarqube'){
                             echo "${env.BUILD_NUMBER}"
