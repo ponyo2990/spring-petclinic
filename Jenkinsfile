@@ -1,4 +1,7 @@
- pipeline {
+/* import shared library */
+@Library('global_shared_libs')_
+
+pipeline {
     agent any
         tools {
             maven 'maven'
@@ -18,7 +21,7 @@
         }
 
         stage('SonarQube analysis') {
-            
+            slackSend (color: '00ff00', message: "In SonarQube Analysis now..")
             environment {
                 scannerHome = tool 'sonar'
             }
@@ -57,6 +60,13 @@
                 }
             }    
         }
-   }    
+   }
+  
+ post {
+      always { 
+            slack(currentBuild.currentResult)
+            //cleanWs()
+        }
+    }
 }
 
