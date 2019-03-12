@@ -44,7 +44,7 @@ pipeline {
                                 " -Dsonar.sources=src/main/" + 
                                 " -Dsonar.tests=src/test/" +
                                 " -Dsonar.junit.reportsPath=target/surefire-reports" +
-                                " -Dsonar.jacoco.reportPath="target/jacoco.exec" +
+                                " -Dsonar.jacoco.reportPath="target/jacoco\.exec" +
                                 " -Dsonar.java.binaries=target/classes" +
                                 " -Dsonar.language=java"
                         }
