@@ -21,7 +21,7 @@ pipeline {
             }
         }
 	
-	stage('Test'){
+	stage('Test') {
 	    steps {
 		junit '**/target/surefire-reports/TEST-*.xml'
 		}
@@ -54,7 +54,7 @@ pipeline {
             }
         
         
-        stage("Quality Gate"){
+       /* stage("Quality Gate"){
             steps{
                 withCredentials([string(credentialsId: 'sonar', variable: 'sonarLogin')]) {
                     timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
@@ -66,14 +66,23 @@ pipeline {
                     }
                 }
             }    
-        }
+        }*/
    }
   
  post {
-      always { 
-            slack(currentBuild.currentResult)
-            //cleanWs()
+	success {
+         sh "echo 'Pipeline reached the finish line!'"
+         slackSend (color: '00ff00', message: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         }
+        failure {
+            sh "echo 'Pipeline failed'"
+            slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+        }
+      /*always { 
+            slack(currentBuild.currentResult)
+            cleanWs()
+
+        }*/
     }
 }
 
