@@ -43,10 +43,25 @@ services:
       SONARQUBE_JDBC_USERNAME: sonar
       SONARQUBE_JDBC_PASSWORD: sonarpasswd
       SONARQUBE_JDBC_URL: "jdbc:postgresql://postgres:5432/sonar"
+    volumes:
+      - /opt/sonarqube/data/:/opt/sonarqube/data
     depends_on:
       - postgres
 
 
+  nexus:
+    image: sonatype/nexus3
+    ports:
+      - "8081:8081"
+    logging:
+      driver: fluentd
+    networks:
+      - petclinic
+    volumes:
+      - /opt/nexus-data:/nexus-data
+    depends_on:
+      - fluentd
+  
   mysql:
     image: mysql:5.7
     ports:

@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('checkout'){
             steps {
-            	slackSend (color: '00ff00', message: "Checking out git..")
+            	slackSend (color: '00ff00', message: "Checking out git..for Job: ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER}")
                 git branch: 'master',
                 url: 'https://github.com/ponyo2990/spring-petclinic'
             }
@@ -20,6 +20,12 @@ pipeline {
                sh './mvnw package'
             }
         }
+	
+	stage('Test'){
+	    steps {
+		junit '**/target/surefire-reports/TEST-*.xml'
+		}
+	}
 
         stage('SonarQube analysis') {
             environment {
