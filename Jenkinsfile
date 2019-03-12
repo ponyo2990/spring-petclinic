@@ -1,6 +1,3 @@
-/* import shared library */
-@Library('global_shared_libs')_
-
 pipeline {
     agent any
         tools {
@@ -16,14 +13,16 @@ pipeline {
         }
         stage('Build') {
             steps {
-               sh 'chmod u+x mvnw'
-               sh './mvnw package'
+                slackSend (color: '00ff00', message: "On build stage")
+                sh 'chmod u+x mvnw'
+                sh './mvnw package'
             }
         }
 	
-	stage('Test') {
+	    stage('Test') {
 	    steps {
-		junit '**/target/surefire-reports/TEST-*.xml'
+	        slackSend (color: '00ff00', message: "On Test stage")
+		    junit '**/target/surefire-reports/TEST-*.xml'
 		}
 	}
 
@@ -43,7 +42,7 @@ pipeline {
                                 " -Dsonar.projectVersion=${env.BUILD_NUMBER}" + 
                                 " -Dsonar.projectKey=PC" + 
                                 " -Dsonar.sources=src/main/" + 
-                                " -Dsonar.tests=src/test/" +
+                                " -Dsonar.tests=target/surefire-reports" +
                                 " -Dsonar.java.binaries=target/classes" +
                                 " -Dsonar.language=java"
                         }
@@ -54,27 +53,29 @@ pipeline {
             }
         
         
-       /* stage("Quality Gate"){
+       /*stage("Quality Gate"){
             steps{
                 withCredentials([string(credentialsId: 'sonar', variable: 'sonarLogin')]) {
-                    timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
-                        //def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
-                        //if (qg.status != 'OK') {
-                        //    error "Pipeline aborted due to quality gate failure: ${qg.status}"
-                        //}
-                        waitForQualityGate abortPipeline: true
+                    withSonarQubeEnv('sonarqube'){
+                        timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
+                            //def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
+                            //if (qg.status != 'OK') {
+                            //    error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                            //}
+                            waitForQualityGate abortPipeline: true
+                        }
                     }
                 }
             }    
         }*/
-   }
-  
+    }
+
  post {
-	success {
-         sh "echo 'Pipeline reached the finish line!'"
-         slackSend (color: '00ff00', message: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+	 success {
+            sh "echo 'Pipeline reached the finish line!'"
+            slackSend (color: '00ff00', message: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         }
-        failure {
+         failure {
             sh "echo 'Pipeline failed'"
             slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         }
@@ -84,5 +85,5 @@ pipeline {
 
         }*/
     }
-}
 
+}
