@@ -79,7 +79,7 @@ pipeline {
 
 	stage("push to docker hub"){
 		steps{
-			
+			echo TBD
 		}
 	}
 
