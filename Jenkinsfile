@@ -1,4 +1,9 @@
 pipeline {
+    environment {
+    registry = "ponyo2990/devops-petclinic"
+    registryCredential = 'dockerhub'
+    dockerImage = ''
+    }
     agent any
         tools {
             maven 'maven'
@@ -73,7 +78,7 @@ pipeline {
 
 	stage("Build Image"){
 		steps{
-			sh "docker build --build-arg version=${BUILD_NUMBER}  -t ponyo2990/devops-petclinic:${BUILD_NUMBER} -t ponyo2990/devops-petclinic:lts  < Dockerfile"
+			sh "docker build --build-arg version=${BUILD_NUMBER}  -t ponyo2990/devops-petclinic:${BUILD_NUMBER} -t ponyo2990/devops-petclinic:lts ."
 		}
 	}
 
