@@ -85,7 +85,7 @@ pipeline {
 
 	stage("deploy to production"){
 		steps{
-			sh "docker run -d -p 7070:8094 ponyo2990/devops-petclinic:lts
+			sh "docker run -d -p 7070:8094 ponyo2990/devops-petclinic:lts"
 		}
 	}	
 
