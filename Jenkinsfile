@@ -26,7 +26,7 @@ pipeline {
 		}
 	}
 
-        stage('SonarQube analysis') {
+       /* stage('SonarQube analysis') {
             environment {
                 scannerHome = tool 'sonar'
             }
@@ -52,7 +52,7 @@ pipeline {
                           //  waitForQualityGate abortPipeline: true
                         }
                     }
-            }
+            }*/
         
         
        /*stage("Quality Gate"){
