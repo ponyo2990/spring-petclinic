@@ -15,7 +15,7 @@ pipeline {
             steps {
                 slackSend (color: '00ff00', message: "On build stage")
                 sh 'chmod u+x mvnw'
-                sh './mvnw package'
+                sh "./mvnw package -Dversion=${BUILD_NUMBER}"
             }
         }
 	
@@ -68,6 +68,27 @@ pipeline {
                 }
             }    
         }*/
+
+	stage("Build Image"){
+		steps{
+			sh "docker build --build-arg version=${BUILD_NUMBER}  -t ponyo2990/devops-petclinic:${BUILD_NUMBER} -t ponyo2990/devops-petclinic:lts  < Dockerfile"
+		}
+	}
+
+	stage("push to docker hub"){
+		steps{
+			
+		}
+	}
+
+	stage("deploy to production"){
+		steps{
+			sh "docker run -d -p 7070:8094 ponyo2990/devops-petclinic:lts
+		}
+	}	
+
+
+
     }
 
  post {
@@ -79,11 +100,6 @@ pipeline {
             sh "echo 'Pipeline failed'"
             slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
         }
-      /*always { 
-            slack(currentBuild.currentResult)
-            cleanWs()
-
-        }*/
     }
 
 }

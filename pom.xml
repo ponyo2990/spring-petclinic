@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.springframework.samples</groupId>
   <artifactId>devops-petclinic</artifactId>
-  <version>2.1.0.BUILD-SNAPSHOT</version>
+  <version>2.1.${version}</version>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -207,6 +207,22 @@
           </dependency>
         </dependencies>
       </plugin>
+      <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+                <manifest>
+                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                </manifest>
+                <archive>
+                    <manifestEntries>
+                        <Specification-Title>${project.name}</Specification-Title>
+                        <Specification-Version>${project.version}</Specification-Version>
+                        <Implementation-Version>${build.number}</Implementation-Version>
+                    </manifestEntries>
+                </archive>
+            </configuration>
+        </plugin>
     </plugins>
   </build>
 
