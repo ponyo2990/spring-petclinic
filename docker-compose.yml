@@ -35,16 +35,16 @@ services:
     ports:
       - "9000:9000"
       - "9092:9092"
-    logging:
-      driver: fluentd      
     networks:
       - petclinic
+    logging:
+      driver: fluentd
     environment:
       SONARQUBE_JDBC_USERNAME: sonar
       SONARQUBE_JDBC_PASSWORD: sonarpasswd
       SONARQUBE_JDBC_URL: "jdbc:postgresql://postgres:5432/sonar"
     volumes:
-      - /opt/sonarqube/data/:/opt/sonarqube/data
+      - /opt/sonarqube/data:/opt/sonarqube/data
     depends_on:
       - postgres
 
