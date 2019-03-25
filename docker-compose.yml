@@ -105,16 +105,16 @@ services:
     depends_on:
       - elasticsearch
     
-  nexus:
-    image: sonatype/nexus3
-    ports:
-      - "8084:8081"
+        # nexus:
+        #image: sonatype/nexus3
+        # ports:
+        # - "8084:8081"
         # logging:
         #driver: fluentd
-    networks:
-      - petclinic
-    volumes:
-      - "/etc/nexus/nexus-data:/nexus-data"
+        #  networks:
+        #- petclinic
+        # volumes:
+        #- "/etc/nexus/nexus-data:/nexus-data"
         #depends_on:
         # - fluentd
 

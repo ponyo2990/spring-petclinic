@@ -78,13 +78,15 @@ pipeline {
 
 	stage("Build Image"){
 		steps{
-			sh "docker build --build-arg version=${BUILD_NUMBER}  -t ponyo2990/devops-petclinic:${BUILD_NUMBER} -t ponyo2990/devops-petclinic:lts ."
+			slackSend (color: '00ff00', message: "Buidling docker image..")
+			sh "docker build -t ponyo2990/devops-petclinic:${BUILD_NUMBER} -t ponyo2990/devops-petclinic:lts ."
 		}
 	}
 
 	stage("push to docker hub"){
 		steps{
-			withDockerRegistry([ credentialsId: "c8d2e685-2f19-47e0-90ef-d3386a148908", url: "" ]) {
+			slackSend (color: '00ff00', message: "Pushing to DockerHub.")
+			withDockerRegistry([ credentialsId: "dockerhub", url: "" ]) {
           			sh "docker push ponyo2990/devops-petclinic:${BUILD_NUMBER}"
           			sh "docker push ponyo2990/devops-petclinic:lts"
         		}
@@ -92,13 +94,18 @@ pipeline {
 	}
 
 	stage("deploy to production"){
+		input{
+			message "Press Ok to continue"
+			submitter "manjit"
+			parameters {
+				string(name:'username', defaultValue: 'user', description: 'Username of the user pressing Ok')
+			}
+		}
 		steps{
+			slackSend (color: '00ff00', message: "Deploying to Production: http://localhost:7070/")
 			sh "docker run -d -p 7070:8094 ponyo2990/devops-petclinic:lts"
 		}
 	}	
-
-
-
     }
 
  post {
