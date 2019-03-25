@@ -87,7 +87,7 @@ pipeline {
 		steps{
 			//sh "port=$((6060 + ${BUILD_NUMBER}))"
                         slackSend (color: '00ff00', message: "Deploying to Staging: http://localhost:6060/")
-                        sh "docker run -d -p 6060:8094 ponyo2990/devops-petclinic:lts"
+                        sh "docker run -d -p 6060:8080 ponyo2990/devops-petclinic:lts"
                 }
         }
 
@@ -112,7 +112,7 @@ pipeline {
 		steps{
 			//sh "prodPort=$((7070 + ${BUILD_NUMBER}))"
 			slackSend (color: '00ff00', message: "Deploying to Production: http://localhost:7070/")
-			sh "docker run -d -p 7070:8094 ponyo2990/devops-petclinic:lts"
+			sh "docker run -d -p 7070:8080 ponyo2990/devops-petclinic:lts"
 		}
 	}	
     }
