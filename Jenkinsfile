@@ -84,7 +84,10 @@ pipeline {
 
 	stage("push to docker hub"){
 		steps{
-			echo TBD
+			withDockerRegistry([ credentialsId: "c8d2e685-2f19-47e0-90ef-d3386a148908", url: "" ]) {
+          			sh "docker push ponyo2990/devops-petclinic:${BUILD_NUMBER}"
+          			sh "docker push ponyo2990/devops-petclinic:lts"
+        		}
 		}
 	}
 
