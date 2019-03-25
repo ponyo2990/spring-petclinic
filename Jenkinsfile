@@ -20,7 +20,7 @@ pipeline {
             steps {
                 slackSend (color: '00ff00', message: "On build stage")
                 sh 'chmod u+x mvnw'
-                sh "./mvnw package -Dversion=${BUILD_NUMBER}"
+                sh "./mvnw clean package -Dversion=${BUILD_NUMBER}"
             }
         }
 	

@@ -16,7 +16,16 @@ test:
 	echo "test"
 build:
 	echo "build"
-	./mvnw package
+	./mvnw clean package
 release:
-	echo "release"
-
+	echo "release to production"
+dcclean:
+	docker rm $$(docker ps -aq)
+diclean:
+	docker rmi
+jenkins:
+	docker-compose up -d jenkins
+envup:
+	docker-compose up
+envdown:
+	docker-compose down	
