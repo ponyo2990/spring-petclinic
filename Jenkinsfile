@@ -20,7 +20,7 @@ pipeline {
             steps {
                 slackSend (color: '00ff00', message: "On build stage")
                 sh 'chmod u+x mvnw'
-                sh "./mvnw clean package -Dversion=${BUILD_NUMBER}"
+                sh "./mvnw clean package"
             }
         }
 	
@@ -83,6 +83,14 @@ pipeline {
 		}
 	}
 
+	stage("deploy to staging"){
+		steps{
+			sh "port=$((6060 + ${BUILD_NUMBER}))"
+                        slackSend (color: '00ff00', message: "Deploying to Staging: http://localhost:$port/")
+                        sh "docker run -d -p $(port):8094 ponyo2990/devops-petclinic:lts"
+                }
+        }
+
 	stage("push to docker hub"){
 		steps{
 			slackSend (color: '00ff00', message: "Pushing to DockerHub.")
@@ -102,8 +110,9 @@ pipeline {
 			}
 		}
 		steps{
-			slackSend (color: '00ff00', message: "Deploying to Production: http://localhost:7070/")
-			sh "docker run -d -p 7070:8094 ponyo2990/devops-petclinic:lts"
+			sh "prodPort=$((7070 + ${BUILD_NUMBER}))"
+			slackSend (color: '00ff00', message: "Deploying to Production: http://localhost:$prodPort/")
+			sh "docker run -d -p $(prodPort):8094 ponyo2990/devops-petclinic:lts"
 		}
 	}	
     }
